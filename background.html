@@ -1,0 +1,58 @@
+<!doctype html>
+<script>
+// Simple extension to change content-type header
+
+// define all possible content-types the user can toggle
+var availableTypes = new Array("text/html; charset=utf-8","text/html; charset=ISO-8859-1");
+var availableIcons = new Array("gfx/utf.png","gfx/iso.png");
+var availableTitles = new Array("UTF8","ISO-W");
+
+// default setup - be aware, this should be the same as availableTypes[0]
+chrome.browserAction.setIcon({path: availableIcons[0]});
+chrome.browserAction.setTitle({title: availableTitles[0]});
+
+// toggle var for current type
+var currentType = 0;
+
+// attach listener to browserAction
+chrome.browserAction.onClicked.addListener(toggleType);
+
+// implement type toggle when user pushes browseraction
+function toggleType() {
+	currentType = (currentType + 1) % availableTypes.length;
+
+	chrome.browserAction.setIcon({path: availableIcons[currentType]});
+	chrome.browserAction.setTitle({title: availableTitles[currentType]});
+
+	//console.log("new type: "+currentType);
+}
+
+// attach event handler to intercept headers from server
+chrome.webRequest.onHeadersReceived.addListener(
+  function(info) {
+  	var response = new Array();
+  	for (var header in info.responseHeaders) {
+  		if(info.responseHeaders[header].name == "Content-Type") {
+  			// TODO: explode on charset= to leave type alone
+  			response.push({"name": "Content-Type", "value": availableTypes[currentType]});
+  		}else {
+  			response.push(info.responseHeaders[header]);
+  		}
+  	}
+
+  	//for (var header in response) {
+  	//	console.log("name: "+response[header].name+" - value: "+response[header].value);
+  	//}
+
+	return {responseHeaders: response};
+
+  },
+  // filters
+  {
+    urls: [
+      "<all_urls>"
+    ]
+  },
+  ["blocking", "responseHeaders"]
+);
+</script>

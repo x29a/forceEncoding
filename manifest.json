@@ -1,0 +1,25 @@
+{
+  "name": "forceEncoding",
+  "version": "1.0.1",
+  "description": "Force encoding of webpage to be UTF-8 or ISO",
+  "icons":
+  {
+		"16": "gfx/forceEncoding_16.png",
+		"48": "gfx/forceEncoding_48.png",
+		"128": "gfx/forceEncoding_128.png"
+  },
+
+  "browser_action":
+  {
+    "default_icon": "gfx/utf.png"
+
+  },
+  "background_page" : "background.html",
+
+  "permissions":
+  [
+    "webRequest",
+    "webRequestBlocking",
+    "http://*/*"
+  ]
+}
